@@ -35,6 +35,9 @@ bool inject(const char *unpacker_path, const char *self_path, const char *target
     
     if (!read_into_file(unpacker_path, tmp_file, -1))
         return false;
+
+    if (remove(unpacker_path))
+        return false;
     
     if (!read_into_file(self_path, tmp_file, -1))
         return false;
