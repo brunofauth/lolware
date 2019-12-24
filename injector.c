@@ -15,7 +15,7 @@
 bool inject(const char *unpacker_path, const char *self_path, const char *target_path) {
     // fuck race conditions tbh, i need this to work; i need a name
     // and not just a pointer to a handle or whatever.
-    char *tmp_path = tempnam(NULL, "lolwr");
+    char *tmp_path = tempnam(NULL, "");
     if (tmp_path == NULL)
         return false;
 

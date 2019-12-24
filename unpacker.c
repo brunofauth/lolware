@@ -29,7 +29,7 @@ bool unpack(const char *full_bin_path, char **unpacker, char **injector, char **
 
     // fuck race conditions tbh, i need this to work; i need a name
     // and not just a pointer to a handle or whatever.
-    *unpacker = tempnam(NULL, "lolwr");
+    *unpacker = tempnam(NULL, "");
     if (*unpacker == NULL)
         return false;
 
@@ -38,7 +38,7 @@ bool unpack(const char *full_bin_path, char **unpacker, char **injector, char **
 
     // fuck race conditions tbh, i need this to work; i need a name
     // and not just a pointer to a handle or whatever.
-    *injector = tempnam(NULL, "lolwr");
+    *injector = tempnam(NULL, "");
     if (*injector == NULL)
         return false;
 
@@ -47,7 +47,7 @@ bool unpack(const char *full_bin_path, char **unpacker, char **injector, char **
     
     // fuck race conditions tbh, i need this to work; i need a name
     // and not just a pointer to a handle or whatever.
-    *original = tempnam(NULL, "lolwr");
+    *original = tempnam(NULL, "");
     if (*original == NULL)
         return false;
 
