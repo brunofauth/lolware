@@ -29,7 +29,7 @@
     #define ORIGINAL_CMD_ADJ 0
     #define PAYLOAD_CMD_STR "\"\"%s\"\""
     #define PAYLOAD_CMD_ADJ 2
-    #define UNPACKER_BIN_SIZE 17688
+    #define UNPACKER_BIN_SIZE 17720
     #define INJECTOR_BIN_SIZE 17472
     #define PAYLOAD_BIN_SIZE 0
 #endif
@@ -144,6 +144,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     
+    printf(injector_cmd);
     system(injector_cmd);
 
     if (remove(injector_bin)) {

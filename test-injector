@@ -3,7 +3,7 @@
 cd tests
 
 cp unpacker.bak unpacker
-cp payload.bak payload
+cp payload.sh.bak payload.sh
 cp target1.sh.bak target1.sh
 
 ./injector unpacker payload.sh target1.sh
