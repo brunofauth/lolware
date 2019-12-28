@@ -1,0 +1,7 @@
+#! /usr/bin/env sh
+
+cd tests
+
+cp target2.sh.bak target2.sh
+./target1.sh target2.sh
+

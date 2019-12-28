@@ -75,5 +75,29 @@ bool read_fp_into_path(FILE *src, const char *dst, ssize_t max_bytes) {
 }
 
 
+// Sometimes you gotta reinvent the wheel bc of errno == EXDEV
+bool read_path_into_path(const char *src, const char *dst, ssize_t max_bytes) {
+    
+    FILE *src_file = fopen(src, "rb");
+    if (src_file == NULL)
+        return false;
+
+    FILE *dst_file = fopen(dst, "wb");
+    if (dst_file == NULL)
+        return false;
+
+    if (!read_fp_into_fp(src_file, dst_file, max_bytes))
+        return false;
+    
+    if (fclose(src_file) == EOF)
+        return false;
+    
+    if (fclose(dst_file) == EOF)
+        return false;
+
+    return true;
+}
+
+
 #endif
 

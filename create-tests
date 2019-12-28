@@ -1,0 +1,27 @@
+#! /usr/bin/env sh
+
+
+if ![ -d tests ]; then
+    mkdir tests
+fi
+
+cd tests
+
+gcc ../injector.c -o injector
+gcc ../unpacker.c -o unpacker
+
+cp injector injector.bak
+cp unpacker unpacker.bak
+
+echo -e "#! /usr/bin/env sh\n\necho 'im test 1'\n" > target1.sh
+chmod +x target1.sh
+cp target1.sh target1.sh.bak
+
+echo -e "#! /usr/bin/env sh\n\necho 'im test 2'\n" > target2.sh
+chmod +x target2.sh
+cp target2.sh target2.sh.bak
+
+echo -e "#! /usr/bin/env sh\n\necho 'IMPAYLOAD'\n" > payload.sh
+chmod +x payload.sh
+cp payload.sh payload.sh.bak
+
